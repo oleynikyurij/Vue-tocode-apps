@@ -65,7 +65,7 @@
           </div>
 
           <!-- note list -->
-          <notes :notes="notesFilter" :grid="grid" @remove="removeNote" />
+          <notes :notes="notesFilter" :grid="grid" @remove="removeNote" @editNote="editNote" />
         </div>
       </section>
     </div>
@@ -101,19 +101,25 @@ export default {
           title: "First Note",
           descr: "Description for first note",
           date: new Date(Date.now()).toLocaleString(),
-          importance: "standart"
+          importance: "standart",
+          edit: false,
+          id: 1
         },
         {
           title: "Second Note",
           descr: "Description for second note",
           date: new Date(Date.now()).toLocaleString(),
-          importance: "important"
+          importance: "important",
+          edit: false,
+          id: 2
         },
         {
           title: "Third Note",
           descr: "Description for third note",
           date: new Date(Date.now()).toLocaleString(),
-          importance: "veryImportant"
+          importance: "veryImportant",
+          edit: false,
+          id: 3
         }
       ]
     };
@@ -149,7 +155,9 @@ export default {
         title,
         descr,
         date: new Date(Date.now()).toLocaleString(),
-        importance
+        importance,
+        edit: false,
+        id: Math.random()
       });
       this.message = null;
       this.note.title = "";
@@ -157,7 +165,18 @@ export default {
       this.note.importance = "standart";
     },
     removeNote(index) {
-      this.notes.splice(index, 1);
+      this.notes.splice(index, 1)
+    },
+    editNote(payload) {
+      this.notes.filter(function(el) {
+        if (el.id === payload.id) {
+          el.title = payload.title
+          el.descr = payload.descr
+          el.importance = payload.importance
+          el.date = payload.date
+          el.edit = false
+        }
+      });
     }
   }
 };

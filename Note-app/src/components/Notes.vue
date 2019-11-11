@@ -1,13 +1,29 @@
 <template>
   <!-- note list -->
   <div class="notes">
-    <div class="note" :class="{ full: !grid }" v-for="(note, index) in notes" :key="index">
+    <div class="note" :class="{ full: !grid }" v-for="(note, index) in notes" :key="note.id">
       <div class="note-header" :class="{ full: !grid }">
-        <p :class="note.importance">{{ note.title }}</p>
-        <p style="cursor: pointer;" @click="removeNote(index)">x</p>
+				<input type="text"
+				v-if="note.edit"
+				v-model="note.title"
+				@keyup.enter= "saveNote(index)"
+				@keyup.esc= "abortEdit()"
+				 />
+        <div style="display:flex; justify-content: space-between; width: 100%;" v-else>
+        	<p
+					:class="note.importance"
+					@click=" !editOneNote ? editNote(index): '' ">
+					{{ note.title }}
+					</p>
+	        <p style="cursor: pointer;" @click="removeNote(index)">x</p>
+        </div>
+
+
       </div>
+
       <div class="note-body">
-        <p>{{ note.descr }}</p>
+        <textarea v-if="note.edit" v-model="note.descr" ></textarea>
+        <p v-else>{{ note.descr }}</p>
         <span>{{ note.date }}</span>
       </div>
     </div>
@@ -16,6 +32,12 @@
 
 <script>
 export default {
+	data() {
+		return {
+			editOneNote: false,
+			tempNote: null
+		}
+	},
   props: {
     notes: {
       type: Array,
@@ -30,7 +52,33 @@ export default {
     removeNote(index) {
       console.log(`Note id - ${index} removed`);
       this.$emit("remove", index);
-    }
+    },
+    editNote(index) {
+				// изменяем флаг для запрета редактирования при
+			this.editOneNote = true
+			// сохраняем исходные значения перед началом редактирования
+			this.tempNote = Object.assign({}, this.notes[index])
+			// разрешаем редактирование выбранного элемента
+			this.notes[index].edit = true
+
+		},
+		saveNote(index) {
+
+			this.notes[index].date = new Date(Date.now()).toLocaleString()
+			// отправляем в родительский компонент отредактированные данные
+			this.$emit('editNote', this.notes[index] )
+			// разрешаем редактирование следующего элемента
+			this.editOneNote = false
+		},
+		abortEdit() {
+			// отправляем в родительский компонент сохранённые данные
+			this.$emit('editNote', this.tempNote )
+			// сбрасываем сохранённые данные
+			this.tempNote = null
+			// разрешаем редактирование следующего элемента
+			this.editOneNote = false
+		}
+
   }
 };
 </script>
@@ -69,6 +117,9 @@ export default {
   }
   p {
     font-size: 22px;
+    &:first-child {
+      cursor: pointer;
+    }
   }
   .standart {
     color: #402caf;
