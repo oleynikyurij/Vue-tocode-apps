@@ -2,8 +2,8 @@
   <!-- note list -->
   <div class="notes">
     <div class="note" :class="{ full: !grid }" v-for="(note, index) in notes" :key="index">
-      <div class="note-header" :class="{ full: !grid }" >
-        <p>{{ note.title }}</p>
+      <div class="note-header" :class="{ full: !grid }">
+        <p :class="note.importance">{{ note.title }}</p>
         <p style="cursor: pointer;" @click="removeNote(index)">x</p>
       </div>
       <div class="note-body">
@@ -27,12 +27,12 @@ export default {
     }
   },
   methods: {
-    removeNote (index) {
-      console.log(`Note id - ${index} removed`)
-      this.$emit('remove', index)
+    removeNote(index) {
+      console.log(`Note id - ${index} removed`);
+      this.$emit("remove", index);
     }
   }
-}
+};
 </script>
 
 <style lang="scss">
@@ -48,11 +48,11 @@ export default {
   padding: 18px 20px;
   margin-bottom: 20px;
   background-color: #ffffff;
-  transition: all .25s cubic-bezier(.02,.01,.47,1);
-  box-shadow: 0 30px 30px rgba(0,0,0,.02);
+  transition: all 0.25s cubic-bezier(0.02, 0.01, 0.47, 1);
+  box-shadow: 0 30px 30px rgba(0, 0, 0, 0.02);
   &:hover {
-    box-shadow: 0 30px 30px rgba(0,0,0,.04);
-    transform: translate(0,-6px);
+    box-shadow: 0 30px 30px rgba(0, 0, 0, 0.04);
+    transform: translate(0, -6px);
     transition-delay: 0s !important;
   }
   &.full {
@@ -69,7 +69,15 @@ export default {
   }
   p {
     font-size: 22px;
+  }
+  .standart {
     color: #402caf;
+  }
+  .important {
+    color: #e4f314;
+  }
+  .veryImportant {
+    color: #d30d3f;
   }
   svg {
     margin-right: 12px;
@@ -90,8 +98,19 @@ export default {
       }
     }
   }
+  @media screen and (max-width: 768px) {
+    flex-direction: column;
+    justify-content: center;
+    margin: 0 10px;
+    .wrapper__search {
+      margin: 10px 0;
+      input {
+        min-width: 340px;
+      }
+    }
+  }
 }
-.note-body{
+.note-body {
   p {
     margin: 20px 0;
   }
@@ -101,4 +120,3 @@ export default {
   }
 }
 </style>
-
